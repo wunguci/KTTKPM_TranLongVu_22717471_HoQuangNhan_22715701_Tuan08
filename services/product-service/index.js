@@ -10,7 +10,7 @@ app.use(express.json());
 
 // kết nối đến Redis để đọc dữ liệu sản phẩm
 const client = createClient({
-  url: process.env.REDIS_URL || "redis://localhost:6379",
+  url: process.env.REDIS_URL || "redis://localhost:6380",
 });
 client.on("error", (err) => console.error("Redis Client Error", err));
 

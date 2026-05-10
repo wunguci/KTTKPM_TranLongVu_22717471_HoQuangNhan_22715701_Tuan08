@@ -10,7 +10,7 @@ app.use(express.json());
 
 // kết nối đến Redis để lưu/đọc giỏ hàng
 const client = createClient({
-  url: process.env.REDIS_URL || "redis://localhost:6379",
+  url: process.env.REDIS_URL || "redis://localhost:6380",
 });
 client.on("error", (err) => console.error("Redis Client Error", err));
 
@@ -18,8 +18,10 @@ async function start() {
   await client.connect();
   console.log("Cart PU connected to Redis");
 
-  // demo: dùng cố định một userId
-  const USER_ID = "user1";
+  app.use((req, res, next) => {
+    req.userId = req.headers["x-user-id"] || "user1";
+    next();
+  });
 
   app.post("/cart/add", async (req, res) => {
     const { productId, quantity } = req.body;
@@ -31,7 +33,7 @@ async function start() {
       if (!exists) return res.status(404).json({ error: "Product not found" });
 
       // tăng số lượng trong giỏ hàng (Hash)
-      await client.hIncrBy(`cart:${USER_ID}`, productId, quantity || 1);
+      await client.hIncrBy(`cart:${req.userId}`, productId, quantity || 1);
       res.json({ message: "Added to cart" });
     } catch (err) {
       res.status(500).json({ error: err.message });
@@ -41,7 +43,7 @@ async function start() {
   app.get("/cart", async (req, res) => {
     try {
       // lấy toàn bộ item trong giỏ
-      const items = await client.hGetAll(`cart:${USER_ID}`);
+      const items = await client.hGetAll(`cart:${req.userId}`);
       const cart = [];
       for (const [productId, quantity] of Object.entries(items)) {
         const product = await client.hGetAll(`product:${productId}`);

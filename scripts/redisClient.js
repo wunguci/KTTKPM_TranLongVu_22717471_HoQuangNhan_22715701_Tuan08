@@ -2,7 +2,7 @@ const redis = require("redis");
 
 // Tạo client Redis, ưu tiên URL từ biến môi trường
 const client = redis.createClient({
-  url: process.env.REDIS_URL || "redis://localhost:6379",
+  url: process.env.REDIS_URL || "redis://localhost:6380",
 });
 
 // Ghi log lỗi kết nối Redis để dễ debug
