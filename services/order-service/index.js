@@ -21,9 +21,12 @@ const decrStockScript = `
     return newStock
 `;
 
+const os = require('os');
+const hostname = os.hostname();
+
 async function start() {
     await client.connect();
-    console.log('Order PU connected to Redis');
+    console.log(`Order PU [${hostname}] connected to Redis`);
 
     app.use((req, res, next) => {
         req.userId = req.headers['x-user-id'] || 'user1';
@@ -79,7 +82,7 @@ async function start() {
     });
 
     app.listen(PORT, () => {
-        console.log(`PU3 - Order Service running on port ${PORT}`);
+        console.log(`PU3 - Order Service [${hostname}] running on port ${PORT}`);
     });
 }
 

@@ -11,9 +11,12 @@ app.use(express.json());
 const client = createClient({ url: process.env.REDIS_URL || 'redis://localhost:6380' });
 client.on('error', (err) => console.error('Redis Client Error', err));
 
+const os = require('os');
+const hostname = os.hostname();
+
 async function start() {
     await client.connect();
-    console.log('Inventory PU connected to Redis');
+    console.log(`Inventory PU [${hostname}] connected to Redis`);
 
     app.get('/stock/:productId', async (req, res) => {
         try {
@@ -53,7 +56,7 @@ async function start() {
     });
 
     app.listen(PORT, () => {
-        console.log(`PU4 - Inventory Service running on port ${PORT}`);
+        console.log(`PU4 - Inventory Service [${hostname}] running on port ${PORT}`);
     });
 }
 

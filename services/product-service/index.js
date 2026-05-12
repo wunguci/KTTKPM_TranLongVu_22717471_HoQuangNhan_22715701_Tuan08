@@ -14,9 +14,12 @@ const client = createClient({
 });
 client.on("error", (err) => console.error("Redis Client Error", err));
 
+const os = require('os');
+const hostname = os.hostname();
+
 async function start() {
   await client.connect();
-  console.log("Product PU connected to Redis");
+  console.log(`Product PU [${hostname}] connected to Redis`);
 
   // danh sách sản phẩm từ Redis (list + hash)
   app.get("/products", async (req, res) => {
@@ -47,7 +50,7 @@ async function start() {
   });
 
   app.listen(PORT, () => {
-    console.log(`PU1 - Product Service running on port ${PORT}`);
+    console.log(`PU1 - Product Service [${hostname}] running on port ${PORT}`);
   });
 }
 
